@@ -1,11 +1,6 @@
 
 import * as utils from '../utils'
 
-interface HarvesterMemory extends CreepMemory {
-    transfering?: boolean
-    tId?: string
-    action?: string
-}
 
 
 export function run(creep: Creep): void {

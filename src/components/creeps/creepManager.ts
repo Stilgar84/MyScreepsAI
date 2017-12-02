@@ -117,7 +117,10 @@ function _buildMissingCreeps(/*room: Room, creeps: Creep[]*/) {
                 srcid = 1
             }
             const newName = Game.spawns.Sp2.createCreep([WORK,CARRY,MOVE,WORK,CARRY,MOVE], undefined, <HarvesterMemory>{role: 'harvester', source: srcid});
-            log.info("Spawning a new harvester:", newName)
+            if(newName == ERR_BUSY || newName == ERR_NOT_ENOUGH_RESOURCES){}
+            else {
+              log.info("Spawning a new harvester:", newName)
+            }
             //var newName = Game.spawns.Sp1.createCreep([WORK,WORK,WORK,CARRY,MOVE,CARRY,MOVE], undefined, {role: 'harvester', source: srcid});
     //        console.log('Spawning new harvester: ' + newName);
         }
