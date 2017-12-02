@@ -1,6 +1,14 @@
 import * as Config from "../../config/config";
 
-import * as harvester from "./roles/harvester";
+import * as roleBuilder from "./roles/builder";
+import * as roleUpgrader from "./roles/upgrader";
+import * as roleCarry from "./roles/carry";
+import * as roleTower from "./roles/tower";
+import * as roleHarvester from "./roles/harvester";
+import * as roleStaticHarvester from "./roles/static_harvester";
+import * as attack_room2 from "./roles/attack_room2";
+import * as claim_room2 from "./roles/claim_room2";
+import * as setup_room2 from "./roles/setup_room2";
 
 import { log } from "../../lib/logger/log";
 
@@ -21,10 +29,30 @@ export function run(room: Room): void {
   _buildMissingCreeps(room, creeps);
 
   _.each(creeps, (creep: Creep) => {
-    if (creep.memory.role === "harvester") {
-      harvester.run(creep);
+    if(creep.memory.role == 'harvester') {
+      roleHarvester.run(creep);
+    } else if(creep.memory.role == 'upgrader') {
+      roleUpgrader.run(creep);
+    } else if(creep.memory.role == 'builder') {
+      roleBuilder.run(creep);
+    } else if(creep.memory.role == 'carry') {
+      roleCarry.run(creep);
+    } else if(creep.memory.role == 'sharvester') {
+      roleStaticHarvester.run(creep);
+    } else if(creep.memory.role == 'attack_room2') {
+      // Game.spawns.Sp1.createCreep([ATTACK,MOVE], undefined, {role: 'attack_room2'});
+      attack_room2.run(creep)
+    } else if(creep.memory.role == 'claim_room2') {
+      // Game.spawns.Sp1.createCreep([CLAIM,MOVE], undefined, {role: 'claim_room2'});
+      claim_room2.run(creep)
+    } else if(creep.memory.role == 'setup_room2') {
+      // Game.spawns.Sp1.createCreep([WORK,WORK,WORK,WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE], undefined, {role: 'setup_room2'});
+      setup_room2.run(creep)
     }
   });
+
+  const towers = room.find<Tower>(FIND_MY_STRUCTURES, {filter: (s:Structure) => s.structureType==STRUCTURE_TOWER});
+  _.each(towers, roleTower.run)
 }
 
 /**

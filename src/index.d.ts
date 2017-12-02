@@ -5,6 +5,14 @@ interface CreepMemory {
   working: boolean;
 }
 
+
+interface CarryMemory extends CreepMemory {
+  unload?: boolean
+  tId?: string
+  flagName?: string
+}
+
+
 // add objects to `global` here
 declare namespace NodeJS {
   interface Global {
