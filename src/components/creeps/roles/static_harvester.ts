@@ -1,13 +1,10 @@
 //import * as utils from'../utils'
 
-interface SetupSHMemory extends CreepMemory {
-    source?: number
-    tId?: string
-}
+
 
 
 export function run(creep: Creep): void {
-    let mem = creep.memory as SetupSHMemory
+    let mem = creep.memory as StaticHarvMemory
     var sources = creep.room.find<Source>(FIND_SOURCES);
     var sourceid = mem.source || 0;
     if(creep.harvest(sources[sourceid]) == ERR_NOT_IN_RANGE) {

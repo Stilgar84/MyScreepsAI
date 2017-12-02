@@ -1,4 +1,4 @@
-import * as Config from "../../config/config";
+//import * as Config from "../../config/config";
 
 import * as roleBuilder from "./roles/builder";
 import * as roleUpgrader from "./roles/upgrader";
@@ -20,13 +20,8 @@ import { log } from "../../lib/logger/log";
  */
 export function run(room: Room): void {
   const creeps = room.find<Creep>(FIND_MY_CREEPS);
-  const creepCount = _.size(creeps);
 
-  if (Config.ENABLE_DEBUG_MODE) {
-    log.info(creepCount + " creeps found in the playground.");
-  }
-
-  _buildMissingCreeps(room, creeps);
+  _buildMissingCreeps(/*room, creeps*/);
 
   _.each(creeps, (creep: Creep) => {
     if(creep.memory.role == 'harvester') {
@@ -60,7 +55,56 @@ export function run(room: Room): void {
  *
  * @param {Room} room
  */
-function _buildMissingCreeps(room: Room, creeps: Creep[]) {
+
+ // currently work on two room by a big hack
+function _buildMissingCreeps(/*room: Room, creeps: Creep[]*/) {
+    // about 50 tick to replace, so ignore nearly dead one
+    const harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'sharvester' && creep.ticksToLive>100);
+    if(harvesters.length < 6) {
+        let h1 = _.filter(harvesters, (creep) => (creep.memory as StaticHarvMemory).source==0);
+
+        let srcid
+        if(h1.length<3) {
+            srcid = 0
+        } else {
+            srcid = 1
+        }
+        let newName = Game.spawns.Sp1.createCreep([WORK,WORK,CARRY,MOVE], undefined, <StaticHarvMemory>{role: 'sharvester', source: srcid});
+        log.info("Spawning a new StaticHarvester:", newName)
+        //let newName = Game.spawns.Sp1.createCreep([WORK,WORK,WORK,CARRY,MOVE,CARRY,MOVE], undefined, {role: 'harvester', source: srcid});
+//        console.log('Spawning new harvester: ' + newName);
+    }
+    let builder = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
+    if(builder.length < 3) {
+        let newName = Game.spawns.Sp1.createCreep([WORK, WORK, WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE], undefined, {role: 'builder'});
+        log.info("Spawning a new builder:", newName)
+//        let newName = Game.spawns.Sp1.createCreep([WORK,WORK,WORK,CARRY,MOVE,CARRY,MOVE], undefined, {role: 'builder'});
+//        console.log('Spawning new harvester: ' + newName);
+    }
+
+    let upgrader = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
+    if(upgrader.length < 1) {
+        //let newName = Game.spawns.Sp1.createCreep([WORK, WORK, WORK,CARRY,MOVE,MOVE], undefined, {role: 'upgrader'});
+        let newName = Game.spawns.Sp1.createCreep([WORK,WORK, WORK, WORK, CARRY,MOVE], undefined, {role: 'upgrader'});
+        log.info("Spawning a new upgrader:", newName)
+//        console.log('Spawning new harvester: ' + newName);
+    }
+
+    const ncarry1 = 6
+    const ncarry2 = 6
+    let carryer = _.filter(Game.creeps, (creep) => creep.memory.role == 'carry' && creep.my);
+    if(carryer.length < ncarry1+ncarry2) {
+        let carryerA = _.filter(carryer, (creep) => (creep.memory as CarryMemory).flagName=="LoadingFlag");
+        if(carryerA.length < ncarry1) {
+            let newName = Game.spawns.Sp1.createCreep([CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], undefined, <CarryMemory>{role: 'carry', flagName: "LoadingFlag"});
+            log.info("Spawning a new carry:", newName)
+        } else {
+            let newName = Game.spawns.Sp1.createCreep([CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], undefined, <CarryMemory>{role: 'carry', flagName: "Loading2"});
+            log.info("Spawning a new carry:", newName)
+        }
+    }
+
+  /*
   let bodyParts: BodyPartConstant[];
 
   // Iterate through each creep and push them into the role array.
@@ -89,6 +133,7 @@ function _buildMissingCreeps(room: Room, creeps: Creep[]) {
       _spawnCreep(spawn, bodyParts, "harvester");
     });
   }
+  */
 }
 
 /**
@@ -98,7 +143,7 @@ function _buildMissingCreeps(room: Room, creeps: Creep[]) {
  * @param {BodyPartConstant[]} bodyParts
  * @param {string} role
  * @returns
- */
+ *
 function _spawnCreep(spawn: Spawn, bodyParts: BodyPartConstant[], role: string) {
   const uuid: number = Memory.uuid;
   let status: number | string = spawn.canCreateCreep(bodyParts, undefined);
@@ -130,3 +175,4 @@ function _spawnCreep(spawn: Spawn, bodyParts: BodyPartConstant[], role: string) 
     return status;
   }
 }
+*/

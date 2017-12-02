@@ -1,8 +1,6 @@
 // memory extension samples
 interface CreepMemory {
   role: string;
-  room: string;
-  working: boolean;
 }
 
 
@@ -12,6 +10,10 @@ interface CarryMemory extends CreepMemory {
   flagName?: string
 }
 
+interface StaticHarvMemory extends CreepMemory {
+  source?: number
+  tId?: string
+}
 
 // add objects to `global` here
 declare namespace NodeJS {

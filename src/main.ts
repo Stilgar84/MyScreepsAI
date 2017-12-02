@@ -29,22 +29,17 @@ function mloop() {
     Memory.uuid = 0;
   }
 
+  // Clears any non-existing creep memory.
+  for (const name in Memory.creeps) {
+    if (!Game.creeps[name]) {
+      log.info("Clearing non-existing creep memory:", name);
+      delete Memory.creeps[name];
+    }
+  }
+
   for (const i in Game.rooms) {
     const room: Room = Game.rooms[i];
-
     CreepManager.run(room);
-
-    // Clears any non-existing creep memory.
-    for (const name in Memory.creeps) {
-      const creep: any = Memory.creeps[name];
-
-      if (creep.room === room.name) {
-        if (!Game.creeps[name]) {
-          log.info("Clearing non-existing creep memory:", name);
-          delete Memory.creeps[name];
-        }
-      }
-    }
   }
 }
 
