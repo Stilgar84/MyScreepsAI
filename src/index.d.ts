@@ -9,6 +9,12 @@ interface CarryMemory extends CreepMemory {
   tId?: string
   flagName?: string
 }
+interface HarvesterMemory extends CreepMemory {
+  transfering?: boolean
+  tId?: string
+  action?: string
+  source?: number
+}
 
 interface StaticHarvMemory extends CreepMemory {
   source?: number

@@ -104,6 +104,24 @@ function _buildMissingCreeps(/*room: Room, creeps: Creep[]*/) {
         }
     }
 
+
+    var harvesters2 = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
+    //    console.log('Harvesters: ' + harvesters.length);
+
+        if(harvesters2.length < 6) {
+            const h1 = _.filter(harvesters, (creep) => (creep.memory as HarvesterMemory).source==0);
+            let srcid
+            if(h1.length<3) {
+                srcid = 0
+            } else {
+                srcid = 1
+            }
+            const newName = Game.spawns.Sp2.createCreep([WORK,CARRY,MOVE,WORK,CARRY,MOVE], undefined, <HarvesterMemory>{role: 'harvester', source: srcid});
+            log.info("Spawning a new harvester:", newName)
+            //var newName = Game.spawns.Sp1.createCreep([WORK,WORK,WORK,CARRY,MOVE,CARRY,MOVE], undefined, {role: 'harvester', source: srcid});
+    //        console.log('Spawning new harvester: ' + newName);
+        }
+
   /*
   let bodyParts: BodyPartConstant[];
 
