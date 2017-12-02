@@ -41,7 +41,18 @@ var roleUpgrader = {
             if(sources.length==0) {
                 creep.say("NoFlag")
             } else {
-                creep.moveTo(sources[0]);
+                var targets = creep.pos.findInRange(FIND_STRUCTURES, 1)
+                targets = targets.filter((structure) => {
+                    return (structure.structureType == STRUCTURE_CONTAINER)
+                    &&                            structure.store.energy > 0
+                    ;
+                });
+                if(targets.length > 0) {
+                    target = targets[0]
+                    creep.withdraw(target, RESOURCE_ENERGY)
+                } else {
+                    creep.moveTo(sources[0]);
+                }
             }
         }
 	}

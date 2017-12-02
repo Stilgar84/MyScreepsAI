@@ -6,7 +6,7 @@ var roleHarvester = {
     /** @param {Creep} creep **/
     run: function(creep) {
         
-	    if(creep.memory.transfering && creep.carry.energy <= 10) {
+	    if(creep.memory.transfering && creep.carry.energy <= 0) {
             creep.memory.transfering = false;
             creep.memory.tId = null
             creep.say("-> harv")
@@ -17,14 +17,19 @@ var roleHarvester = {
 
 	    if(!creep.memory.transfering) {
             var sources = creep.room.find(FIND_SOURCES);
-            var sourceid = 0 //(creep.memory.source || 0);
+            var sourceid = 0 //creep.memory.source || 0;
             //creep.say(creep.name + " " + (creep.memory.source || 0))
-            if(creep.harvest(sources[sourceid]) == ERR_NOT_IN_RANGE) {
+            var err = creep.harvest(sources[sourceid])
+            if(err == ERR_NOT_IN_RANGE) {
                 creep.moveTo(sources[sourceid]);
+            } else if(err == ERR_NOT_ENOUGH_RESOURCES) {
+                if(creep.harvest(sources[1]) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(sources[sourceid]);
+                }
             }
         }
         else {
-            var target = Game.getObjectById(creep.memory.tId);
+            var target = null //Game.getObjectById(creep.memory.tId);
             // should retarget from time to time too
             if(target==null) {
                 // searching for target
@@ -32,7 +37,7 @@ var roleHarvester = {
 
                 var targets = creep.room.find(FIND_STRUCTURES, {
                         filter: (structure) => {
-                            return (structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN)
+                            return (structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN || structure.structureType == STRUCTURE_TOWER)
                             &&                            structure.energy < structure.energyCapacity
                             ;
                         }
@@ -68,11 +73,51 @@ var roleHarvester = {
                             }
                         }
                     } else {
-                        var targets = creep.room.find(FIND_FLAGS, {
-                                filter: (c) => c.name=="LoadingFlag"
-                        });
-                        if(targets.length > 0) {
-                            creep.moveTo(targets[0]);
+                        var target = null //Game.getObjectById(creep.memory.tId);
+                        var action = creep.memory.action;
+                        if(target==null) {
+                            // look first for urgent repair
+                            // only needed if room has no tower to handle this
+                            // ! roads and collector are neutral
+                            var targets = creep.room.find(FIND_STRUCTURES, {
+                                filter: (s) => s.structureType==STRUCTURE_WALL && s.hits<100
+                            });
+                            //console.log("repair: " + targets)
+                            if(targets.length) {
+                                target = targets[0] // better selection? + filter more
+                                action = "repair"
+                            } else {
+                    	        targets = creep.room.find(FIND_MY_CONSTRUCTION_SITES);
+                                if(targets.length) {
+                                    target = targets[0] // select the oldest construction site
+                                    action = "build"
+                                }
+                            }
+                            
+                            if(target) {
+                                creep.memory.tId = target.id
+                                creep.memory.action = action
+                            }
+                        }
+                        if(target) {
+                            var err = null;
+                            if(action=="repair") {
+                                if(target.hits==target.hitsMax) {
+                                    creep.memory.tId = null
+                                }
+                                err = creep.repair(target)
+                            } else {
+                                err = creep.build(target)
+                            }
+                            if(err == ERR_NOT_IN_RANGE) {
+                                creep.moveTo(target);
+                            } else if(err == ERR_INVALID_TARGET) {
+                                creep.memory.tId = null
+                            }
+                        } else {
+                            if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+                                creep.moveTo(creep.room.controller);
+                            }
                         }
                     }
                 }

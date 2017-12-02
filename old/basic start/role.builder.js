@@ -14,8 +14,8 @@ var roleBuilder = {
             // only needed if room has no tower to handle this
             // ! roads and collector are neutral
             var targets = creep.room.find(FIND_STRUCTURES, {
-                filter: (s) => ((s.structureType==STRUCTURE_WALL && s.hits<0.7*wallTargetHp)
-                || (s.structureType!=STRUCTURE_WALL && s.hits<(s.hitsMax*0.5))) && (s.my || s.owner===undefined)
+                filter: (s) => (((s.structureType==STRUCTURE_WALL || s.structureType==STRUCTURE_RAMPART) && s.hits<0.7*wallTargetHp)
+                || (s.structureType!=STRUCTURE_WALL && s.structureType!=STRUCTURE_RAMPART && s.hits<(s.hitsMax*0.5))) && (s.my || s.owner===undefined)
             });
             //console.log("repair: " + targets)
             if(targets.length) {
@@ -37,8 +37,8 @@ var roleBuilder = {
         if(target) {
             var err = null;
             if(action=="repair") {
-                if((target.structureType==STRUCTURE_WALL && target.hits>=wallTargetHp)
-                || (target.structureType!=STRUCTURE_WALL && target.hits>=target.hitsMax)) {
+                if(((target.structureType==STRUCTURE_WALL || target.structureType==STRUCTURE_RAMPART) && target.hits>=wallTargetHp)
+                || (target.structureType!=STRUCTURE_WALL && target.structureType!=STRUCTURE_RAMPART && target.hits>=target.hitsMax)) {
                     creep.memory.tId = null
                 }
                 err = creep.repair(target)
