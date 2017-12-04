@@ -1,11 +1,6 @@
 
 import * as roleUpgrader from './upgrader'
 
-interface BuilderMemory extends CreepMemory {
-    action?: string
-    tId?: string
-}
-
 const wallTargetHp = 20000
 export function run(creep: Creep): void {
     let mem = creep.memory as BuilderMemory

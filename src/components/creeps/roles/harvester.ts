@@ -55,7 +55,7 @@ export function run(creep: Creep): void {
                 }
             } else {
                 const targets = creep.room.find<Creep>(FIND_MY_CREEPS, {
-                        filter: (c:Creep) => { return (c.memory.role == "carry") && !(c.memory as CarryMemory).unload
+                        filter: (c:Creep) => { return (c.memory.role == "carry") && !c.memory.unload
                             && (c.carry.energy < c.carryCapacity)
                             && utils.distanceApprox(creep,c)<5 }
                 });

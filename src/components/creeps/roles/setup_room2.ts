@@ -1,11 +1,5 @@
 import * as move2room2 from'../actions/move2room2'
 
-interface SetupR2Memory extends CreepMemory {
-    building?: boolean
-    action?: string
-    tId?: string
-}
-
 
 export function run(creep: Creep): void {
     if(!move2room2.move(creep)) {

@@ -69,7 +69,7 @@ function _buildMissingCreeps(/*room: Room, creeps: Creep[]*/) {
         } else {
             srcid = 1
         }
-        let newName = Game.spawns.Sp1.createCreep([WORK,WORK,CARRY,MOVE], undefined, <StaticHarvMemory>{role: 'sharvester', source: srcid});
+        let newName = Game.spawns.Sp1.createCreep([WORK,WORK,CARRY,MOVE], undefined, {role: 'sharvester', source: srcid});
         log.info("Spawning a new StaticHarvester:", newName)
         //let newName = Game.spawns.Sp1.createCreep([WORK,WORK,WORK,CARRY,MOVE,CARRY,MOVE], undefined, {role: 'harvester', source: srcid});
 //        console.log('Spawning new harvester: ' + newName);
@@ -96,10 +96,10 @@ function _buildMissingCreeps(/*room: Room, creeps: Creep[]*/) {
     if(carryer.length < ncarry1+ncarry2) {
         let carryerA = _.filter(carryer, (creep) => (creep.memory as CarryMemory).flagName=="LoadingFlag");
         if(carryerA.length < ncarry1) {
-            let newName = Game.spawns.Sp1.createCreep([CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], undefined, <CarryMemory>{role: 'carry', flagName: "LoadingFlag"});
+            let newName = Game.spawns.Sp1.createCreep([CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], undefined, {role: 'carry', flagName: "LoadingFlag"});
             log.info("Spawning a new carry:", newName)
         } else {
-            let newName = Game.spawns.Sp1.createCreep([CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], undefined, <CarryMemory>{role: 'carry', flagName: "Loading2"});
+            let newName = Game.spawns.Sp1.createCreep([CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], undefined, {role: 'carry', flagName: "Loading2"});
             log.info("Spawning a new carry:", newName)
         }
     }
@@ -108,7 +108,7 @@ function _buildMissingCreeps(/*room: Room, creeps: Creep[]*/) {
     var harvesters2 = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
     //    console.log('Harvesters: ' + harvesters.length);
 
-        if(harvesters2.length < 6) {
+        if(harvesters2.length < 9) {
             const h1 = _.filter(harvesters, (creep) => (creep.memory as HarvesterMemory).source==0);
             let srcid
             if(h1.length<3) {
@@ -116,7 +116,7 @@ function _buildMissingCreeps(/*room: Room, creeps: Creep[]*/) {
             } else {
                 srcid = 1
             }
-            const newName = Game.spawns.Sp2.createCreep([WORK,CARRY,MOVE,WORK,CARRY,MOVE], undefined, <HarvesterMemory>{role: 'harvester', source: srcid});
+            const newName = Game.spawns.Sp2.createCreep([WORK,CARRY,MOVE,WORK,CARRY,MOVE], undefined, {role: 'harvester', source: srcid});
             if(newName == ERR_BUSY || newName == ERR_NOT_ENOUGH_RESOURCES){}
             else {
               log.info("Spawning a new harvester:", newName)
