@@ -1,12 +1,18 @@
 
 import * as roleUpgrader from './upgrader'
 
-const wallTargetHp = 20000
+const wallTargetHpMain = 20000
+const wallTargetHpSecondary = 400
+
 export function run(creep: Creep): void {
     let mem = creep.memory as BuilderMemory
     let target = Game.getObjectById<ConstructionSite | Structure>(mem.tId);
     let action = mem.action;
     if(target==null) {
+        let wallTargetHp = wallTargetHpSecondary
+        if(creep.room.name=="E47N26") {
+            wallTargetHp = wallTargetHpMain
+        }
         // look first for urgent repair
         // only needed if room has no tower to handle this
         // ! roads and collector are neutral
@@ -36,6 +42,10 @@ export function run(creep: Creep): void {
     if(target) {
         let err;
         if(action=="repair") {
+            let wallTargetHp = wallTargetHpSecondary
+            if(creep.room.name=="E47N26") {
+                wallTargetHp = wallTargetHpMain
+            }
             const _target = target as Structure
             if(((target.structureType==STRUCTURE_WALL || target.structureType==STRUCTURE_RAMPART) && _target.hits>=wallTargetHp)
             || (target.structureType!=STRUCTURE_WALL && target.structureType!=STRUCTURE_RAMPART && _target.hits>=_target.hitsMax)) {
