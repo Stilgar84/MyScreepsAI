@@ -59,10 +59,20 @@ export function run(creep: Creep): void {
                     }
                 } else {
                     const targets = creep.room.find<Flag>(FIND_FLAGS, {
-                            filter: (c: Flag) => c.name=="UpgradeFlag"
+                            filter: (c: Flag) => c.name=="UpgradeFlag" || c.name=="Upgrade2"
                     });
                     if(targets.length > 0) {
                         creep.moveTo(targets[0]);
+                        let targetsC = creep.pos.findInRange<Structure>(FIND_STRUCTURES, 1)
+                        targetsC = targetsC.filter((structure) => {
+                            return (structure.structureType == STRUCTURE_CONTAINER)
+                            &&            (structure as Container).store.energy < (structure as Container).storeCapacity
+                            ;
+                        });
+                        if(targetsC.length > 0) {
+                            const target = targetsC[0]
+                            creep.transfer(target, RESOURCE_ENERGY)
+                        }
                     }
                 }
             }
@@ -85,7 +95,7 @@ export function run(creep: Creep): void {
         }
     }
     else {
-        const flagName = mem.flagName || "LoadingFlag";
+        const flagName = mem.flagName;
         mem.flagName = flagName
         let targets = creep.room.find<Flag>(FIND_FLAGS);
         targets = targets.filter((o) => o.name==flagName)

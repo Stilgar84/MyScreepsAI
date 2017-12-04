@@ -78,10 +78,21 @@ const DHTickToLiveBeforeReplace = 75
 function _buildMissingCreeps(room: Room, creeps: Creep[]) {
   if(!room.controller)
     return
+
+  let rid=1
+  if(room.name=="E46N27")
+    rid=2
+
   //log.debug(room, creeps.map((c)=>c.memory.role))
   // could replace those two by an array of id alive
   let numDH = 0
   let lastSrcId
+
+  let numCarrya = 0
+  let numCarryb = 0
+
+  let numBuilder = 0
+  let numUpgrader = 0
 
   creeps.forEach((c)=>{
     const mem = c.memory
@@ -91,6 +102,18 @@ function _buildMissingCreeps(room: Room, creeps: Creep[]) {
           numDH+=1
           lastSrcId = mem.tId
         }
+        break
+      case 'carry':
+        if(mem.flagName=="Loading1a" || mem.flagName=="Loading2a")
+          numCarrya+=1
+        else
+          numCarryb+=1
+        break
+      case 'builder':
+        numBuilder+=1
+        break
+      case 'upgrader':
+        numUpgrader+=1
         break
     }
   })
@@ -102,6 +125,23 @@ function _buildMissingCreeps(room: Room, creeps: Creep[]) {
       }
     }
   }
+
+  if(numBuilder < 3) {
+      spawnCreep(room, [WORK, WORK, WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE], {role: 'builder'});
+  }
+
+  if(numUpgrader < 1) {
+      spawnCreep(room, [WORK,WORK, WORK, WORK, CARRY,MOVE], {role: 'upgrader'});
+  }
+
+  if(numCarrya < 6) {
+    spawnCreep(room, [CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], {role: 'carry', flagName: "Loading"+rid+"a"});
+  }
+  if(numCarryb < 6) {
+    spawnCreep(room, [CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], {role: 'carry', flagName: "Loading"+rid+"b"});
+  }
+
+
 }
 function _buildMissingCreepsGlobal(/*room: Room, creeps: Creep[]*/) {
     // about 50 tick to replace, so ignore nearly dead one
@@ -122,7 +162,7 @@ function _buildMissingCreepsGlobal(/*room: Room, creeps: Creep[]*/) {
 //        console.log('Spawning new harvester: ' + newName);
     }
     */
-
+/*
     let builder = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
     if(builder.length < 3) {
         let newName = Game.spawns.Sp1.createCreep([WORK, WORK, WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE], undefined, {role: 'builder'});
@@ -137,8 +177,8 @@ function _buildMissingCreepsGlobal(/*room: Room, creeps: Creep[]*/) {
         let newName = Game.spawns.Sp1.createCreep([WORK,WORK, WORK, WORK, CARRY,MOVE], undefined, {role: 'upgrader'});
         log.info("Spawning a new upgrader:", newName)
 //        console.log('Spawning new harvester: ' + newName);
-    }
-
+    }*/
+/*
     const ncarry1 = 6
     const ncarry2 = 6
     let carryer = _.filter(Game.creeps, (creep) => creep.memory.role == 'carry' && creep.my);
@@ -152,8 +192,8 @@ function _buildMissingCreepsGlobal(/*room: Room, creeps: Creep[]*/) {
             log.info("Spawning a new carry:", newName)
         }
     }
-
-
+*/
+/*
     var harvesters2 = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
     //    console.log('Harvesters: ' + harvesters.length);
 
@@ -173,7 +213,7 @@ function _buildMissingCreepsGlobal(/*room: Room, creeps: Creep[]*/) {
             //var newName = Game.spawns.Sp1.createCreep([WORK,WORK,WORK,CARRY,MOVE,CARRY,MOVE], undefined, {role: 'harvester', source: srcid});
     //        console.log('Spawning new harvester: ' + newName);
         }
-
+*/
   /*
   let bodyParts: BodyPartConstant[];
 

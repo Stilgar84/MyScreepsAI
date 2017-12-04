@@ -7,7 +7,7 @@ interface CarryMemory extends CreepMemoryBase {
   role: "carry"
   unload?: boolean
   tId?: string
-  flagName?: string
+  flagName: string
 }
 interface HarvesterMemory extends CreepMemoryBase {
   role: "harvester"
