@@ -1,6 +1,6 @@
 // memory extension samples
 interface CreepMemoryBase {
-  state?: string;
+  //state?: string;
 }
 
 interface CarryMemory extends CreepMemoryBase {
@@ -23,6 +23,14 @@ interface StaticHarvMemory extends CreepMemoryBase {
   tId?: string
 }
 
+
+interface DropHarvesterMemory extends CreepMemoryBase {
+  role: "dh"
+  tId: string
+  state?: "mv"|"h"
+  pos?: [number, number]
+}
+
 interface BuilderMemory extends CreepMemoryBase {
   role: "builder"
   action?: string
@@ -41,7 +49,7 @@ interface DefaultCreepMemory extends CreepMemoryBase {
 }
 
 
-type CreepMemory = CarryMemory | HarvesterMemory | StaticHarvMemory | SetupR2Memory | BuilderMemory | DefaultCreepMemory
+type CreepMemory = CarryMemory | DropHarvesterMemory | HarvesterMemory | StaticHarvMemory | SetupR2Memory | BuilderMemory | DefaultCreepMemory
 
 
 // add objects to `global` here
