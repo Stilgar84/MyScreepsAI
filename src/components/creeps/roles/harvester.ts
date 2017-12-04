@@ -15,15 +15,26 @@ export function run(creep: Creep): void {
     }
 
     if(!mem.transfering) {
-        var sources = creep.room.find<Source>(FIND_SOURCES);
-        var sourceid = 0 //mem.source || 0;
-        //creep.say(creep.name + " " + (mem.source || 0))
-        var err = creep.harvest(sources[sourceid])
-        if(err == ERR_NOT_IN_RANGE) {
-            creep.moveTo(sources[sourceid]);
-        } else if(err == ERR_NOT_ENOUGH_ENERGY) {
-            if(creep.harvest(sources[1]) == ERR_NOT_IN_RANGE) {
+        let targets = creep.pos.findInRange<Structure>(FIND_STRUCTURES, 1)
+        targets = targets.filter((structure) => {
+            return (structure.structureType == STRUCTURE_CONTAINER)
+            &&                            (structure as StructureContainer).store.energy > 0
+            ;
+        });
+        if(targets.length > 0) {
+            const target = targets[0]
+            creep.withdraw(target, RESOURCE_ENERGY)
+        } else {
+            var sources = creep.room.find<Source>(FIND_SOURCES);
+            var sourceid = 0 //mem.source || 0;
+            //creep.say(creep.name + " " + (mem.source || 0))
+            var err = creep.harvest(sources[sourceid])
+            if(err == ERR_NOT_IN_RANGE) {
                 creep.moveTo(sources[sourceid]);
+            } else if(err == ERR_NOT_ENOUGH_ENERGY) {
+                if(creep.harvest(sources[1]) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(sources[sourceid]);
+                }
             }
         }
     }
