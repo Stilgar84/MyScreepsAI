@@ -22,7 +22,7 @@ export function run(tower: Tower) {
         }
         let targets = tower.room.find<Structure>(FIND_STRUCTURES, {
             filter: (s:Structure) => (((s.structureType==STRUCTURE_WALL || s.structureType==STRUCTURE_RAMPART) && s.hits<0.7*wallTargetHp)
-            || (s.structureType!=STRUCTURE_WALL && s.structureType!=STRUCTURE_RAMPART && s.hits<(s.hitsMax*0.5)))
+            || (s.structureType!=STRUCTURE_WALL && s.structureType!=STRUCTURE_RAMPART && s.hits<(s.hitsMax*0.7)))
             && ((s as OwnedStructure).my || (s as OwnedStructure).owner===undefined)
         });
         //console.log("repair: " + targets)
