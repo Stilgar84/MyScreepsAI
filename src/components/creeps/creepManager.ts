@@ -117,28 +117,36 @@ function _buildMissingCreeps(room: Room, creeps: Creep[]) {
         break
     }
   })
+  // by priority
+  // TODO something smarter. need minimum one dh + one carry to aliment spawn
+  //  so this should be the utmost priority
   if(numDH<2) {
     const srcs = room.find<Source>(FIND_SOURCES)
     for(const src of srcs) {
       if(src.id!=lastSrcId) {
         spawnCreep(room, [MOVE,MOVE,WORK,WORK,WORK,WORK,WORK], {role:'dh', tId:src.id})
+        return
       }
     }
   }
 
   if(numBuilder < 3) {
       spawnCreep(room, [WORK, WORK, WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE], {role: 'builder'});
+      return
   }
 
   if(numUpgrader < 1) {
       spawnCreep(room, [WORK,WORK, WORK, WORK, CARRY,MOVE], {role: 'upgrader'});
+      return
   }
 
-  if(numCarrya < 6) {
+  if(numCarrya < 5) {
     spawnCreep(room, [CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], {role: 'carry', flagName: "Loading"+rid+"a"});
+    return
   }
-  if(numCarryb < 6) {
+  if(numCarryb < 5) {
     spawnCreep(room, [CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], {role: 'carry', flagName: "Loading"+rid+"b"});
+    return
   }
 
 
