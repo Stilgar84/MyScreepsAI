@@ -140,11 +140,16 @@ function _buildMissingCreeps(room: Room, creeps: Creep[]) {
       return
   }
 
-  if(numCarrya < 5) {
+  let ncarry = 5
+  if(rid==2) {
+    ncarry = 3
+  }
+
+  if(numCarrya < ncarry) {
     spawnCreep(room, [CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], {role: 'carry', flagName: "Loading"+rid+"a"});
     return
   }
-  if(numCarryb < 5) {
+  if(numCarryb < ncarry) {
     spawnCreep(room, [CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], {role: 'carry', flagName: "Loading"+rid+"b"});
     return
   }
