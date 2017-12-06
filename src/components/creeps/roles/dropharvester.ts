@@ -1,4 +1,6 @@
 import { log } from "../../../lib/logger/log";
+import { move2Pos } from "../actions/move";
+
 
 //import * as utils from '../utils'
 
@@ -44,17 +46,6 @@ function findPos(creep: Creep, mem: DropHarvesterMemory) {
     //creep.pos.findPathTo()
     mem.pos = [container.pos.x, container.pos.y]
     mem.state = "mv"
-}
-
-// This is quite generic. reuse once put in place cpu optim of putting creep to sleep
-function move2Pos(creep: Creep, pos:[number, number]): boolean {
-    if(creep.pos.x==pos[0] && creep.pos.y==pos[1])
-        return true
-
-    if(creep.fatigue==0)
-        creep.moveTo(pos[0],pos[1])
-
-    return false
 }
 
 function harvest(creep: Creep, srcId: string) {
