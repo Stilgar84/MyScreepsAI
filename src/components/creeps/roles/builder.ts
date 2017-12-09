@@ -62,6 +62,6 @@ export function run(creep: Creep): void {
         }
     } else {
         // fallback on upgrader logic if there is nothing to build
-        roleUpgrader.run(creep)
+        roleUpgrader.runOld(creep)
     }
 }

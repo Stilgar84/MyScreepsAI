@@ -44,12 +44,31 @@ interface SetupR2Memory extends CreepMemoryBase {
   tId?: string
 }
 
+
+interface UpgraderMemory extends CreepMemoryBase {
+  role: "upgrader"
+  state?: "mv"|"u"
+  posTL?: [number, number]
+  posBR?: [number, number]
+  containerId?: string
+}
+
 interface DefaultCreepMemory extends CreepMemoryBase {
-  role: "upgrader" | "attack_room2" | "claim_room2"
+  role: "attack_room2" | "claim_room2"
 }
 
 
-type CreepMemory = CarryMemory | DropHarvesterMemory | HarvesterMemory | StaticHarvMemory | SetupR2Memory | BuilderMemory | DefaultCreepMemory
+// action system state
+interface CreepASState {
+  role: "AS"
+  ca?: string // current action id
+  cas?: any // current action state
+  oc?: string // on complete handler id
+  ocs?: any // on complete state
+  // could have other handler such as on dead, on damaged ...
+}
+
+type CreepMemory = CreepASState | CarryMemory | DropHarvesterMemory | UpgraderMemory | HarvesterMemory | StaticHarvMemory | SetupR2Memory | BuilderMemory | DefaultCreepMemory
 
 
 // add objects to `global` here

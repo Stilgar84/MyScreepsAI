@@ -10,8 +10,10 @@ import * as roleStaticHarvester from "./roles/static_harvester";
 import * as attack_room2 from "./roles/attack_room2";
 import * as claim_room2 from "./roles/claim_room2";
 import * as setup_room2 from "./roles/setup_room2";
+import * as low_rcl from "./roles/low_rcl";
 
 import { log } from "../../lib/logger/log";
+import {runCreep} from "./action_system"
 
 /**
  * Initialization scripts for CreepManager module.
@@ -34,7 +36,7 @@ export function run(room: Room): void {
         roleHarvester.run(creep);
         break
       case 'upgrader':
-        roleUpgrader.run(creep);
+        roleUpgrader.run(creep, creep.memory);
         break
       case 'builder':
         roleBuilder.run(creep);
@@ -56,6 +58,9 @@ export function run(room: Room): void {
       case 'setup_room2':
         // Game.spawns.Sp1.createCreep([WORK,WORK,WORK,WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE], undefined, {role: 'setup_room2'});
         setup_room2.run(creep)
+        break
+      case 'AS':
+        runCreep(creep, creep.memory)
         break
       /*default:
         log.error("Unknown creep role:", creep.memory.role)*/
@@ -79,82 +84,87 @@ function _buildMissingCreeps(room: Room, creeps: Creep[]) {
   if(!room.controller)
     return
 
-  let rid=1
-  if(room.name=="E46N27")
-    rid=2
-
-  //log.debug(room, creeps.map((c)=>c.memory.role))
-  // could replace those two by an array of id alive
-  let numDH = 0
-  let lastSrcId
-
-  let numCarrya = 0
-  let numCarryb = 0
-
-  let numBuilder = 0
-  let numUpgrader = 0
-
-  creeps.forEach((c)=>{
-    const mem = c.memory
-    switch(mem.role) {
-      case 'dh':
-        if(c.ticksToLive>DHTickToLiveBeforeReplace) {
-          numDH+=1
-          lastSrcId = mem.tId
-        }
-        break
-      case 'carry':
-        if(mem.flagName=="Loading1a" || mem.flagName=="Loading2a")
-          numCarrya+=1
-        else
-          numCarryb+=1
-        break
-      case 'builder':
-        numBuilder+=1
-        break
-      case 'upgrader':
-        numUpgrader+=1
-        break
+  if(room.controller.level<3) {
+    if(creeps.length<5) {
+      spawnCreep(room, [MOVE,MOVE,CARRY,WORK], low_rcl.make())
+      return
     }
-  })
-  // by priority
-  // TODO something smarter. need minimum one dh + one carry to aliment spawn
-  //  so this should be the utmost priority
-  if(numDH<2) {
-    const srcs = room.find<Source>(FIND_SOURCES)
-    for(const src of srcs) {
-      if(src.id!=lastSrcId) {
-        spawnCreep(room, [MOVE,MOVE,WORK,WORK,WORK,WORK,WORK], {role:'dh', tId:src.id})
-        return
+  } else {
+    let rid=1
+    if(room.name=="E46N27")
+      rid=2
+
+    //log.debug(room, creeps.map((c)=>c.memory.role))
+    // could replace those two by an array of id alive
+    let numDH = 0
+    let lastSrcId
+
+    let numCarrya = 0
+    let numCarryb = 0
+
+    let numBuilder = 0
+    let numUpgrader = 0
+
+    creeps.forEach((c)=>{
+      const mem = c.memory
+      switch(mem.role) {
+        case 'dh':
+          if(c.ticksToLive>DHTickToLiveBeforeReplace) {
+            numDH+=1
+            lastSrcId = mem.tId
+          }
+          break
+        case 'carry':
+          if(mem.flagName=="Loading1a" || mem.flagName=="Loading2a")
+            numCarrya+=1
+          else
+            numCarryb+=1
+          break
+        case 'builder':
+          numBuilder+=1
+          break
+        case 'upgrader':
+          numUpgrader+=1
+          break
+      }
+    })
+    // by priority
+    // TODO something smarter. need minimum one dh + one carry to aliment spawn
+    //  so this should be the utmost priority
+    if(numDH<2) {
+      const srcs = room.find<Source>(FIND_SOURCES)
+      for(const src of srcs) {
+        if(src.id!=lastSrcId) {
+          spawnCreep(room, [MOVE,MOVE,WORK,WORK,WORK,WORK,WORK], {role:'dh', tId:src.id})
+          return
+        }
       }
     }
-  }
 
-  if(numBuilder < 3) {
-      spawnCreep(room, [WORK, WORK, WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE], {role: 'builder'});
+    if(numBuilder < 3) {
+        spawnCreep(room, [WORK, WORK, WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE], {role: 'builder'});
+        return
+    }
+
+    if(numUpgrader < 1) {
+        spawnCreep(room, [WORK,WORK, WORK, WORK, CARRY,MOVE], {role: 'upgrader'});
+        return
+    }
+
+    let ncarry = 5
+    if(rid==2) {
+      ncarry = 3
+    }
+
+    if(numCarrya < ncarry) {
+      spawnCreep(room, [CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], {role: 'carry', flagName: "Loading"+rid+"a"});
       return
-  }
-
-  if(numUpgrader < 1) {
-      spawnCreep(room, [WORK,WORK, WORK, WORK, CARRY,MOVE], {role: 'upgrader'});
+    }
+    if(numCarryb < ncarry) {
+      spawnCreep(room, [CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], {role: 'carry', flagName: "Loading"+rid+"b"});
       return
+    }
   }
-
-  let ncarry = 5
-  if(rid==2) {
-    ncarry = 3
-  }
-
-  if(numCarrya < ncarry) {
-    spawnCreep(room, [CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], {role: 'carry', flagName: "Loading"+rid+"a"});
-    return
-  }
-  if(numCarryb < ncarry) {
-    spawnCreep(room, [CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], {role: 'carry', flagName: "Loading"+rid+"b"});
-    return
-  }
-
-
 }
 function _buildMissingCreepsGlobal(/*room: Room, creeps: Creep[]*/) {
     // about 50 tick to replace, so ignore nearly dead one

@@ -1,5 +1,11 @@
 import { log } from "../../../lib/logger/log";
-import { move2Pos } from "../actions/move";
+
+
+export function run(creep: Creep, mem: UpgraderMemory): void {
+    runOld(creep)
+}
+/*
+import { move2FreePosInRect } from "../actions/move";
 
 
 //import * as utils from '../utils'
@@ -10,9 +16,10 @@ export function run(creep: Creep, mem: UpgraderMemory): void {
             findPos(creep, mem);
             // fallthrough
         case "mv":
-            if(move2Pos(creep, mem.pos||[25,25])) {
+            if(move2FreePosInRect(creep, mem.posBR||[25,25], mem.posTL||[25,25])) {
                 mem.state = "u"
-                mem.pos = undefined
+                mem.posBR = undefined
+                mem.posTL = undefined
                 // fallthrough
             } else {
                 break
@@ -24,6 +31,12 @@ export function run(creep: Creep, mem: UpgraderMemory): void {
 }
 
 function findPos(creep: Creep, mem: UpgraderMemory) {
+    // find controller
+
+    // find container in range
+
+    // intersect rect
+
     const src = Game.getObjectById<Source>(mem.tId)
     if(!src || src.room != creep.room) {
         log.error("Invalid source id, either not existing or wrong room:", creep.name)
@@ -74,7 +87,7 @@ function upgrade(creep: Creep, containerId: string) {
         }
     }
 }
-
+*/
 // temporary keep
 
 export function runOld(creep: Creep): void {
