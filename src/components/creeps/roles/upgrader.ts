@@ -1,7 +1,7 @@
-import { log } from "../../../lib/logger/log";
+//import { log } from "../../../lib/logger/log";
 
 
-export function run(creep: Creep, mem: UpgraderMemory): void {
+export function run(creep: Creep, _mem: UpgraderMemory): void {
     runOld(creep)
 }
 /*

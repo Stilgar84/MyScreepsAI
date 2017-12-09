@@ -86,7 +86,10 @@ function _buildMissingCreeps(room: Room, creeps: Creep[]) {
 
   if(room.controller.level<3) {
     if(creeps.length<5) {
-      spawnCreep(room, [MOVE,MOVE,CARRY,WORK], low_rcl.make())
+      let config = [MOVE,MOVE,CARRY,WORK]
+      if(room.energyCapacityAvailable>=500)
+        config = [...config, ...config]
+      spawnCreep(room, config, low_rcl.make())
       return
     }
   } else {
